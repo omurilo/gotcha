@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - rinha
+  
+  app1:
+    container_name: gotcha_one
+    image: omurilo/gotcha
+    build:
+      context: .
+    ports:
+      - 9999:80
+    depends_on:
+      - db
+    networks:
+      - rinha
+
+networks:
+  rinha:
+    driver: bridge
