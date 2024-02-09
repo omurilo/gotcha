@@ -1,2 +1,4 @@
 go.sum
 bin
+load-test
+execute-local-test.sh
