@@ -33,10 +33,10 @@ var (
 	transactionsCollection *mongo.Collection
 )
 
-func TransactionsRouter(client *mongo.Client) {
+func TransactionsRouter(client *mongo.Client, mux *http.ServeMux) {
 	usersCollection = client.Database("rinha").Collection("users")
 	transactionsCollection = client.Database("rinha").Collection("transactions")
-	http.HandleFunc("POST /clientes/{id}/transacoes", transactions)
+	mux.HandleFunc("POST /clientes/{id}/transacoes", transactions)
 }
 
 func transactions(w http.ResponseWriter, r *http.Request) {

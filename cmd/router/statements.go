@@ -26,9 +26,9 @@ type Statement struct {
 	Transactions []Transaction      `bson:"transactions" json:"ultimas_transacoes"`
 }
 
-func StatementsRouter(client *mongo.Client) {
+func StatementsRouter(client *mongo.Client, mux *http.ServeMux) {
 	usersCollection = client.Database("rinha").Collection("users")
-	http.HandleFunc("GET /clientes/{id}/extrato", statements)
+	mux.HandleFunc("GET /clientes/{id}/extrato", statements)
 }
 
 func statements(w http.ResponseWriter, r *http.Request) {

@@ -16,10 +16,12 @@ func Rinha() {
 
 	// Insert demo users
 	database.InitDb(client)
-	router.TransactionsRouter(client)
-	router.StatementsRouter(client)
 
-	err := http.ListenAndServe(":80", nil)
+	mux := http.NewServeMux()
+	router.TransactionsRouter(client, mux)
+	router.StatementsRouter(client, mux)
+
+	err := http.ListenAndServe(":80", mux)
 	if err != nil {
 		log.Fatal(err)
 	}

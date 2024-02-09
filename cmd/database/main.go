@@ -41,7 +41,12 @@ func InitDb(client *mongo.Client) {
 	user5 := User{Id: 5, Limit: 500000, Balance: 0}
 
 	// Insert demo users
-	collection := client.Database("rinha").Collection("users")
+	usersCollection := client.Database("rinha").Collection("users")
+	transactionsCollection := client.Database("rinha").Collection("transactions")
+
+	usersCollection.DeleteMany(context.TODO(), bson.D{})
+	transactionsCollection.DeleteMany(context.TODO(), bson.D{})
+
 	models := []mongo.WriteModel{
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"id": 1}).
@@ -64,16 +69,14 @@ func InitDb(client *mongo.Client) {
 			SetUpdate(bson.D{{"$set", user5}}).
 			SetUpsert(true),
 	}
-	collection.BulkWrite(
+
+	usersCollection.BulkWrite(
 		context.TODO(),
 		models,
 	)
 
-	collection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"id", 1}}})
-	client.Database("rinha").
-		Collection("transactions").
-		Indexes().
-		CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}}})
+	usersCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"id", 1}}})
+	transactionsCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}, {"createdat", 1}}})
 
 	fmt.Println("Demo users inserted")
 }
