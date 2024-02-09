@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -17,7 +18,7 @@ import (
 type Transaction struct {
 	Type        string    `json:"tipo" bson:"type"`
 	Value       uint64    `json:"valor" bson:"value"`
-	Description string    `json:"descricao" bson:"description"`
+	Description *string    `json:"descricao" bson:"description"`
 	CreatedAt   time.Time `json:"realizada_em",omitempty bson:"createdat"`
 	ClientId    uint64    `json:"-" bson:"client_id"`
 }
@@ -61,18 +62,40 @@ func transactions(w http.ResponseWriter, r *http.Request) {
 	var body Transaction
 	err = d.Decode(&body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	fmt.Printf("%+v", body)
+	if body.Description == nil || len(*body.Description) < 1 || len(*body.Description) > 10 {
+		http.Error(w, "Unprocessable Entity", http.StatusUnprocessableEntity)
 		return
 	}
 
 	if body.Type != "c" && body.Type != "d" {
-		http.Error(w, "Type is not accepted", http.StatusBadRequest)
+		fmt.Printf("Type is not accepted: %s\n", body.Type)
+		http.Error(w, "Type is not accepted", http.StatusUnprocessableEntity)
 		return
 	}
 
-	newBalance := user.Balance - int64(body.Value)
+	var newBalance int64
+	if body.Type == "c" {
+		newBalance = user.Balance + int64(body.Value)
+	}
+
+	if body.Type == "d" {
+		newBalance = user.Balance - int64(body.Value)
+	}
 
 	if math.Abs(float64(newBalance)) > float64(user.Limit) {
+		fmt.Printf(
+			"User limit has been reached, limit: %s, balance: %s, value: %s and newBalance: %s\n",
+			user.Limit,
+			user.Balance,
+			body.Value,
+			newBalance,
+		)
 		http.Error(w, "User limit has been reached", http.StatusUnprocessableEntity)
 		return
 	}

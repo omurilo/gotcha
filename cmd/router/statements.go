@@ -61,6 +61,9 @@ func statements(w http.ResponseWriter, r *http.Request) {
 				{"localField", "id"},
 				{"foreignField", "client_id"},
 				{"as", "transactions"},
+				{"pipeline", []bson.D{
+					bson.D{{"$sort", bson.D{{"createdat", -1}}}},
+				}},
 			},
 		}},
 		bson.D{{
@@ -96,5 +99,5 @@ func statements(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	json.NewEncoder(w).Encode(results[0])
 }

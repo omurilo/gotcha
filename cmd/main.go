@@ -2,6 +2,7 @@ package rinha
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/omurilo/gotcha/cmd/database"
@@ -18,5 +19,8 @@ func Rinha() {
 	router.TransactionsRouter(client)
 	router.StatementsRouter(client)
 
-	http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":80", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
