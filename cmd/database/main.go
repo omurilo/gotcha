@@ -70,5 +70,10 @@ func InitDb(client *mongo.Client) {
 	)
 
 	collection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"id", 1}}})
+	client.Database("rinha").
+		Collection("transactions").
+		Indexes().
+		CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}}})
+
 	fmt.Println("Demo users inserted")
 }

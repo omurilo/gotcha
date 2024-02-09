@@ -67,14 +67,13 @@ func transactions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("%+v", body)
 	if body.Description == nil || len(*body.Description) < 1 || len(*body.Description) > 10 {
 		http.Error(w, "Unprocessable Entity", http.StatusUnprocessableEntity)
 		return
 	}
 
 	if body.Type != "c" && body.Type != "d" {
-		fmt.Printf("Type is not accepted: %s\n", body.Type)
+		// fmt.Printf("Type is not accepted: %s\n", body.Type)
 		http.Error(w, "Type is not accepted", http.StatusUnprocessableEntity)
 		return
 	}
@@ -89,13 +88,13 @@ func transactions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if math.Abs(float64(newBalance)) > float64(user.Limit) {
-		fmt.Printf(
-			"User limit has been reached, limit: %s, balance: %s, value: %s and newBalance: %s\n",
-			user.Limit,
-			user.Balance,
-			body.Value,
-			newBalance,
-		)
+		// fmt.Printf(
+		// 	"User limit has been reached, limit: %s, balance: %s, value: %s and newBalance: %s\n",
+		// 	user.Limit,
+		// 	user.Balance,
+		// 	body.Value,
+		// 	newBalance,
+		// )
 		http.Error(w, "User limit has been reached", http.StatusUnprocessableEntity)
 		return
 	}
