@@ -1,27 +1,34 @@
-package rinha
+package main
 
 import (
 	"context"
 	"log"
 	"net/http"
 
-	"github.com/omurilo/gotcha/cmd/database"
-	"github.com/omurilo/gotcha/cmd/router"
+	"github.com/omurilo/gotcha/infra/database"
+	"github.com/omurilo/gotcha/internal/repositories"
+	"github.com/omurilo/gotcha/internal/server"
+	"github.com/omurilo/gotcha/internal/services"
 )
 
-func Rinha() {
-	client := database.DbConn()
+func main() {
+	dbClient := database.NewDbClient()
 
-	defer client.Disconnect(context.Background())
+	defer dbClient.Client.Disconnect(context.Background())
 
 	// Insert demo users
-	database.InitDb(client)
+	dbClient.InitDb()
 
-	mux := http.NewServeMux()
-	router.TransactionsRouter(client, mux)
-	router.StatementsRouter(client, mux)
+	clientsRepository := repositories.NewClientsRepository(dbClient.Client)
+	transactionsRepository := repositories.NewTransactionsRepository(dbClient.Client)
+	statementsRepository := repositories.NewStatementsRepository(dbClient.Client)
 
-	err := http.ListenAndServe(":80", mux)
+	transactionsService := services.NewTransactionsService(clientsRepository, transactionsRepository)
+	statementsService := services.NewStatementsService(clientsRepository, statementsRepository)
+
+	httpServer := server.NewHttpServer(statementsService, transactionsService)
+
+	err := http.ListenAndServe(":80", httpServer.Instance)
 	if err != nil {
 		log.Fatal(err)
 	}
