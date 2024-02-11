@@ -63,6 +63,7 @@ func statements(w http.ResponseWriter, r *http.Request) {
 				{"as", "transactions"},
 				{"pipeline", []bson.D{
 					bson.D{{"$sort", bson.D{{"createdat", -1}}}},
+					bson.D{{"$limit", 10}},
 				}},
 			},
 		}},
