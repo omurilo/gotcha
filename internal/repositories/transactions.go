@@ -20,6 +20,7 @@ func (r *TransactionsRepository) Save(client *entities.Client, transaction *enti
 	_, err := r.client.Database("rinha").Collection("transactions").InsertOne(context.TODO(), transaction)
 
 	if err != nil {
+		// fmt.Println(err)
 		return nil, errors.New("Error has ocurred")
 	}
 

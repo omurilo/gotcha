@@ -24,7 +24,7 @@ func NewTransactionsService(
 }
 
 func (s *TransactionsService) Create(w http.ResponseWriter, r *http.Request) {
-	clientId, err := strconv.ParseUint(r.PathValue("id"), 10, 64)
+	clientId, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,12 +52,14 @@ func (s *TransactionsService) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	amount := int(body.Value)
 	if body.Type == "c" {
-		client.Balance = client.Balance + int64(body.Value)
+		client.Balance = client.Balance + amount
 	}
 
 	if body.Type == "d" {
-		client.Balance = client.Balance - int64(body.Value)
+		client.Balance = client.Balance - amount
+		amount = -1 * amount
 	}
 
 	if err = client.Validate(); err != nil {
@@ -65,8 +67,9 @@ func (s *TransactionsService) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.clientsRepository.UpdateBalance(client)
+	err = s.clientsRepository.UpdateBalance(client, amount)
 	if err != nil {
+		// fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -77,6 +80,7 @@ func (s *TransactionsService) Create(w http.ResponseWriter, r *http.Request) {
 	var response *entities.TransactionResponse
 	response, err = s.transactionsRepository.Save(client, &body)
 	if err != nil {
+		// fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

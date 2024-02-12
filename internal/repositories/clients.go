@@ -18,7 +18,7 @@ func NewClientsRepository(client *mongo.Client) *ClientsRepository {
 	return &ClientsRepository{client}
 }
 
-func (r *ClientsRepository) GetById(clientId uint64) (*entities.Client, error) {
+func (r *ClientsRepository) GetById(clientId int) (*entities.Client, error) {
 	var client entities.Client
 	err := r.client.Database("rinha").Collection("clients").FindOne(context.TODO(), bson.M{"id": clientId}).Decode(&client)
 	if err != nil {
@@ -33,10 +33,10 @@ func (r *ClientsRepository) GetById(clientId uint64) (*entities.Client, error) {
 	return &client, nil
 }
 
-func (r *ClientsRepository) UpdateBalance(client *entities.Client) error {
+func (r *ClientsRepository) UpdateBalance(client *entities.Client, amount int) error {
 	_, err := r.client.Database("rinha").
 		Collection("clients").
-		UpdateOne(context.TODO(), bson.M{"id": client.Id}, bson.M{"$set": bson.M{"balance": client.Balance}})
+		UpdateOne(context.TODO(), bson.M{"id": client.Id}, bson.M{"$inc": bson.M{"balance": amount}})
 
 	return err
 }

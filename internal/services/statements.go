@@ -23,7 +23,7 @@ func NewStatementsService(
 }
 
 func (s *StatementsService) Statement(w http.ResponseWriter, r *http.Request) {
-	clientId, err := strconv.ParseUint(r.PathValue("id"), 10, 64)
+	clientId, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		log.Fatal(err)
 		return

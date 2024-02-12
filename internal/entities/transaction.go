@@ -14,15 +14,15 @@ const (
 
 type Transaction struct {
 	Type        TransactionType `json:"tipo" bson:"type"`
-	Value       uint64          `json:"valor" bson:"value"`
+	Value       uint            `json:"valor" bson:"value"`
 	Description *string         `json:"descricao" bson:"description"`
 	CreatedAt   time.Time       `json:"realizada_em",omitempty bson:"createdat"`
-	ClientId    uint64          `json:"-" bson:"client_id"`
+	ClientId    uint            `json:"-" bson:"client_id"`
 }
 
 type TransactionResponse struct {
-	Limit   uint64 `json:"limite" bson:"limit"`
-	Balance int64  `json:"saldo"  bson:"balance"`
+	Limit   uint `json:"limite" bson:"limit"`
+	Balance int  `json:"saldo"  bson:"balance"`
 }
 
 func (t *Transaction) Validate() error {

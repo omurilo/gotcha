@@ -6,9 +6,9 @@ import (
 )
 
 type Client struct {
-	Id      uint64 `json:"id"     bson:"id"`
-	Limit   uint64 `json:"limite" bson:"limit"`
-	Balance int64  `json:"saldo"  bson:"balance"`
+	Id      uint `json:"id"     bson:"id"`
+	Limit   uint `json:"limite" bson:"limit"`
+	Balance int  `json:"saldo"  bson:"balance"`
 }
 
 func (c *Client) Validate() error {
