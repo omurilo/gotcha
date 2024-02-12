@@ -82,7 +82,7 @@ func (db *DbClient) InitDb() {
 
 	clientsCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"id", 1}}})
 	transactionsCollection.Indexes().
-		CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}, {"createdat", 1}}})
+		CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}, {"created_at", 1}}})
 
 	fmt.Println("Demo clients inserted")
 }

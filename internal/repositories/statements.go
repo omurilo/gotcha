@@ -32,7 +32,7 @@ func (r *StatementsRepository) Statement(client *entities.Client) (*entities.Sta
 				{"foreignField", "client_id"},
 				{"as", "transactions"},
 				{"pipeline", []bson.D{
-					{{"$sort", bson.D{{"createdat", -1}}}},
+					{{"$sort", bson.D{{"created_at", -1}}}},
 					{{"$limit", 10}},
 				}},
 			},

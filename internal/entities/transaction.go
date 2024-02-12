@@ -16,7 +16,7 @@ type Transaction struct {
 	Type        TransactionType `json:"tipo" bson:"type"`
 	Value       uint            `json:"valor" bson:"value"`
 	Description *string         `json:"descricao" bson:"description"`
-	CreatedAt   time.Time       `json:"realizada_em",omitempty bson:"createdat"`
+	CreatedAt   time.Time       `json:"realizada_em,omitempty" bson:"created_at"`
 	ClientId    uint            `json:"-" bson:"client_id"`
 }
 

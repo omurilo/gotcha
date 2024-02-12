@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/omurilo/gotcha/infra/database"
 	"github.com/omurilo/gotcha/internal/repositories"
@@ -12,6 +14,11 @@ import (
 )
 
 func main() {
+	PORT, ok := os.LookupEnv("PORT")
+	if !ok {
+		PORT = "80"
+	}
+
 	dbClient := database.NewDbClient()
 
 	defer dbClient.Client.Disconnect(context.Background())
@@ -28,7 +35,7 @@ func main() {
 
 	httpServer := server.NewHttpServer(statementsService, transactionsService)
 
-	err := http.ListenAndServe(":80", httpServer.Instance)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", PORT), httpServer.Instance)
 	if err != nil {
 		log.Fatal(err)
 	}
