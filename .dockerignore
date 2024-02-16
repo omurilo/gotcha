@@ -1,0 +1,4 @@
+.git
+load-test
+docker-compose.yaml
+Dockerfile*

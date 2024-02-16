@@ -7,10 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/omurilo/gotcha/internal/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/omurilo/gotcha/internal/entities"
 )
 
 type DbClient struct {
@@ -21,14 +22,19 @@ func NewDbClient() *DbClient {
 	DB_URL := os.Getenv("DB_URL")
 
 	if DB_URL == "" {
-		log.Fatal("Could not be estabilish connection with database, please verify DB_URL environment variable")
+		log.Fatal(
+			"Could not be estabilish connection with database, please verify DB_URL environment variable",
+		)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(DB_URL))
+	client, err := mongo.Connect(
+		ctx,
+		options.Client().ApplyURI(DB_URL),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

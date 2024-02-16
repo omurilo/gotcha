@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -30,13 +29,13 @@ func main() {
 	transactionsRepository := repositories.NewTransactionsRepository(dbClient.Client)
 	statementsRepository := repositories.NewStatementsRepository(dbClient.Client)
 
-	transactionsService := services.NewTransactionsService(clientsRepository, transactionsRepository)
+	transactionsService := services.NewTransactionsService(
+		clientsRepository,
+		transactionsRepository,
+	)
 	statementsService := services.NewStatementsService(clientsRepository, statementsRepository)
 
 	httpServer := server.NewHttpServer(statementsService, transactionsService)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%s", PORT), httpServer.Instance)
-	if err != nil {
-		log.Fatal(err)
-	}
+	panic(http.ListenAndServe(fmt.Sprintf(":%s", PORT), httpServer.Instance))
 }
