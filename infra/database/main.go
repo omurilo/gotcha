@@ -58,37 +58,40 @@ func (db *DbClient) InitDb() {
 	clientsCollection := db.Client.Database("rinha").Collection("clients")
 	transactionsCollection := db.Client.Database("rinha").Collection("transactions")
 
-	clientsCollection.DeleteMany(context.TODO(), bson.D{})
-	transactionsCollection.DeleteMany(context.TODO(), bson.D{})
+	// clientsCollection.DeleteMany(context.TODO(), bson.D{})
+	// transactionsCollection.DeleteMany(context.TODO(), bson.D{})
 
 	models := []mongo.WriteModel{
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"id": 1}).
-			SetUpdate(bson.D{{"$set", client1}}).
+			SetUpdate(bson.D{{"$setOnInsert", client1}}).
 			SetUpsert(true),
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.D{{"id", 2}}).
-			SetUpdate(bson.D{{"$set", client2}}).
+			SetUpdate(bson.D{{"$setOnInsert", client2}}).
 			SetUpsert(true),
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.D{{"id", 3}}).
-			SetUpdate(bson.D{{"$set", client3}}).
+			SetUpdate(bson.D{{"$setOnInsert", client3}}).
 			SetUpsert(true),
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.D{{"id", 4}}).
-			SetUpdate(bson.D{{"$set", client4}}).
+			SetUpdate(bson.D{{"$setOnInsert", client4}}).
 			SetUpsert(true),
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.D{{"id", 5}}).
-			SetUpdate(bson.D{{"$set", client5}}).
+			SetUpdate(bson.D{{"$setOnInsert", client5}}).
 			SetUpsert(true),
 	}
 
-	clientsCollection.BulkWrite(context.TODO(), models)
+  results, err := clientsCollection.BulkWrite(context.TODO(), models)
+  if err != nil {
+    fmt.Println("Error when insert accounts:", err)
+  }
+
+  fmt.Printf("Number of documents inserted: %d\n", results.UpsertedCount)
 
 	clientsCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"id", 1}}})
 	transactionsCollection.Indexes().
 		CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{"client_id", 1}, {"created_at", 1}}})
-
-	fmt.Println("Demo clients inserted")
 }
